@@ -1,6 +1,12 @@
 # Windows Setup Guide - Fixing PowerShell Execution Policy
 
-If you're getting the error: "running scripts is disabled on this system", here are several solutions:
+If you're getting the error: "running scripts is disabled on this system" for Python or npm, here are several solutions:
+
+## ⚠️ QUICK FIX: Use Command Prompt Instead
+
+**The easiest solution is to use Command Prompt (cmd) instead of PowerShell for everything.**
+
+Command Prompt doesn't have execution policy restrictions, so all commands work immediately.
 
 ## Solution 1: Use Command Prompt (Easiest)
 
@@ -121,6 +127,31 @@ uvicorn main:app --reload --port 8000
    ```
 
 This avoids all PowerShell execution policy issues!
+
+---
+
+## Fixing npm in PowerShell
+
+If you're getting npm errors in PowerShell, use Command Prompt:
+
+**In Command Prompt:**
+```cmd
+cd C:\Users\Admin\Desktop\py-replica\clooney-scaler\frontend
+npm install
+npm run dev
+```
+
+**Or fix PowerShell execution policy permanently:**
+```powershell
+# Run PowerShell as Administrator, then:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+```
+
+**Or bypass for current session:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+npm install
+```
 
 ---
 

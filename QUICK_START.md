@@ -85,7 +85,18 @@ cd frontend
 ```
 
 ### 2.2 Install Dependencies
-```bash
+
+**⚠️ If you get PowerShell execution policy error, use Command Prompt instead:**
+
+**In Command Prompt (cmd):**
+```cmd
+cd C:\Users\Admin\Desktop\py-replica\clooney-scaler\frontend
+npm install
+```
+
+**Or fix PowerShell execution policy:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 npm install
 ```
 
