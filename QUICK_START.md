@@ -24,14 +24,20 @@ python -m venv venv
 ```
 
 ### 1.3 Activate Virtual Environment
-**On Windows (PowerShell):**
-```bash
-venv\Scripts\activate
+
+**⚠️ IMPORTANT for Windows Users:**
+If you get a PowerShell execution policy error, **use Command Prompt instead of PowerShell** (recommended for Windows).
+
+**On Windows (Command Prompt - RECOMMENDED):**
+```cmd
+venv\Scripts\activate.bat
 ```
 
-**On Windows (Command Prompt):**
-```bash
-venv\Scripts\activate.bat
+**On Windows (PowerShell - if you get errors, use Command Prompt instead):**
+```powershell
+# If you get execution policy error, run this first:
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+venv\Scripts\activate
 ```
 
 **On macOS/Linux:**
