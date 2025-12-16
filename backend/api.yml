@@ -1,0 +1,405 @@
+openapi: 3.0.0
+info:
+  title: Clooney API
+  description: Backend API for Asana replica - Clooney
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /api/projects:
+    get:
+      summary: List all projects
+      tags:
+        - Projects
+      parameters:
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+    
+    post:
+      summary: Create a new project
+      tags:
+        - Projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '422':
+          description: Validation error
+
+  /api/projects/{project_id}:
+    get:
+      summary: Get project by ID
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Project not found
+    
+    put:
+      summary: Update a project
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdate'
+      responses:
+        '200':
+          description: Project updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Project not found
+        '422':
+          description: Validation error
+    
+    delete:
+      summary: Delete a project
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Project deleted
+        '404':
+          description: Project not found
+
+  /api/tasks:
+    get:
+      summary: List all tasks
+      tags:
+        - Tasks
+      parameters:
+        - name: project_id
+          in: query
+          schema:
+            type: string
+        - name: completed
+          in: query
+          schema:
+            type: boolean
+        - name: skip
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    
+    post:
+      summary: Create a new task
+      tags:
+        - Tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Project not found (if project_id provided)
+        '422':
+          description: Validation error
+
+  /api/tasks/{task_id}:
+    get:
+      summary: Get task by ID
+      tags:
+        - Tasks
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+    
+    put:
+      summary: Update a task
+      tags:
+        - Tasks
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task or project not found
+        '422':
+          description: Validation error
+    
+    delete:
+      summary: Delete a task
+      tags:
+        - Tasks
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task deleted
+        '404':
+          description: Task not found
+
+  /api/dashboard:
+    get:
+      summary: Get dashboard data
+      tags:
+        - Dashboard
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+
+  /ws:
+    get:
+      summary: WebSocket connection
+      tags:
+        - WebSocket
+      responses:
+        '101':
+          description: WebSocket connection established
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    ProjectCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+    
+    ProjectUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+    
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+        project_id:
+          type: string
+          nullable: true
+        completed:
+          type: boolean
+          default: false
+        due_date:
+          type: string
+          format: date
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    TaskCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+        project_id:
+          type: string
+          nullable: true
+        completed:
+          type: boolean
+          default: false
+        due_date:
+          type: string
+          format: date
+          nullable: true
+    
+    TaskUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          nullable: true
+          maxLength: 1000
+        project_id:
+          type: string
+          nullable: true
+        completed:
+          type: boolean
+        due_date:
+          type: string
+          format: date
+          nullable: true
+    
+    Dashboard:
+      type: object
+      properties:
+        total_projects:
+          type: integer
+        total_tasks:
+          type: integer
+        completed_tasks:
+          type: integer
+        pending_tasks:
+          type: integer
+        recent_tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        recent_projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+
